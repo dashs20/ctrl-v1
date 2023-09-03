@@ -342,16 +342,16 @@ void get_rx()
 
 }
 
-/*~~~ funcname ~~~ /
+/*~~~ Loop Rate Function ~~~ /
 /
 / Function:
-/   j
+/   To regulate loop rate of main loop.
 /   
 / Inputs:
-/ - j
+/ - freq (hz) looprate
 /
 / Output(s):
-/ - 
+/ - none
 */
 
 void loopRate(int freq) 
