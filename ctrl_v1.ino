@@ -23,8 +23,8 @@ c:::::::cccccc:::::c      t::::::tttt:::::tr:::::r           l::::::l           
 
 // Included libraries
 #include <Wire.h>
-#include "sbus.h"
-#include "MPU6050.h"
+#include "./sbus.h"
+#include "./MPU6050.h"
 
 // Time variables instantiated
 float dt;
@@ -243,10 +243,10 @@ void get_motor_commands()
   float auto_m4 = throttle_cmd + auto_roll + auto_pitch - auto_yaw; // back right
 
   // step 3 is to constrain them between 0 and 100 percent for each motor
-  auto_m1 = diy_constrain(auto_m1,0,100.0);
-  auto_m2 = diy_constrain(auto_m2,0,100.0);
-  auto_m3 = diy_constrain(auto_m3,0,100.0);
-  auto_m4 = diy_constrain(auto_m4,0,100.0);
+  auto_m1 = diy_constrain(auto_m1,min_throttle,100.0);
+  auto_m2 = diy_constrain(auto_m2,min_throttle,100.0);
+  auto_m3 = diy_constrain(auto_m3,min_throttle,100.0);
+  auto_m4 = diy_constrain(auto_m4,min_throttle,100.0);
 
   // step 4 is to translate them into oneshot_125 language, and send it!
   m1_command_PWM = 125 + auto_m1 * 125.0/100.0;
