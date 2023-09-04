@@ -1,69 +1,39 @@
-% Define parameters
-Fs = 1000;             % Sampling frequency (Hz)
-T = 1;                 % Duration of the signal (s)
-t = 0:1/Fs:T-1/Fs;     % Time vector
-f_noise = 50;          % Frequency of the noise (Hz)
-filter_freq = 200;     % Frequency to filter out (Hz)
+clear;
+clc;
 
-% Generate random noise signal
-noise_signal = randn(1, length(t));
+Fs = 2000; % Sampling rate in Hz
+T = 3;     % Total duration of the signal in seconds
+t = 0:1/Fs:T-1/Fs; % Time vector
 
-% Perform FFT on the signal
-fft_signal = fft(noise_signal);
-
-% Reconstruct the signal without using ifft
-reconstructed_signal = zeros(size(noise_signal));
-for k = 1:length(fft_signal)
-    if abs(k - Fs/2) > filter_freq
-        reconstructed_signal = reconstructed_signal + fft_signal(k) * exp(2i*pi*(k-1)*t);
-    end
+% Create a sine wave with various frequencies
+f = [10,100,800]; % frequencies of signal
+x = zeros(1,length(t));
+for i = f
+    x = x + sin(2*pi*i*t);
 end
 
-% Calculate the power spectrum of the original and reconstructed signal
-power_spectrum_original = abs(fft_signal).^2 / length(t);
-power_spectrum_reconstructed = abs(fft(reconstructed_signal)).^2 / length(t);
+% Compute the FFT
+X = fft(x);
 
-% Create a 4x4 subplot
-subplot(2, 2, 1);
-plot(t, noise_signal);
+% Calculate the corresponding frequencies
+N = length(x);
+frequencies = (0:N/2-1) * (Fs/N); % Positive frequencies
+frequencies = [frequencies, -fliplr(frequencies(2:end))]; % Include negative frequencies
+
+% Modify X to remove frequencies you don't like
+cutoff_frequency = 10; % Frequencies above this value will be removed
+X(abs(frequencies) > cutoff_frequency) = 0;
+
+% Reconstruct the signal by taking the inverse FFT
+reconstructed_signal = ifft(X);
+
+% Plot the original and reconstructed signals
+subplot(2,1,1);
+plot(t, x);
 title('Original Signal');
-xlabel('Time (s)');
-ylabel('Amplitude');
 
-subplot(2, 2, 2);
-plot(t, real(reconstructed_signal));
+subplot(2,1,2);
+plot(t, real(reconstructed_signal)); % Use real() to handle potential small imaginary parts
 title('Reconstructed Signal');
+
 xlabel('Time (s)');
-ylabel('Amplitude');
-
-subplot(2, 2, 3);
-plot(0:(Fs/length(t)):(Fs-Fs/length(t)), power_spectrum_original);
-title('Power Spectrum (Original)');
-xlabel('Frequency (Hz)');
-ylabel('Power');
-
-subplot(2, 2, 4);
-plot(0:(Fs/length(t)):(Fs-Fs/length(t)), power_spectrum_reconstructed);
-title('Power Spectrum (Reconstructed)');
-xlabel('Frequency (Hz)');
-ylabel('Power');
-
-% Filter out desired frequencies for the reconstructed signal
-filtered_reconstructed_signal = ifft(fft_signal .* (abs(fft_signal) > filter_freq));
-
-% Display the filtered signal
-figure;
-subplot(2, 1, 1);
-plot(t, real(filtered_reconstructed_signal));
-title('Filtered Reconstructed Signal');
-xlabel('Time (s)');
-ylabel('Amplitude');
-
-% Calculate the power spectrum of the filtered signal
-power_spectrum_filtered = abs(fft(filtered_reconstructed_signal)).^2 / length(t);
-
-subplot(2, 1, 2);
-plot(0:(Fs/length(t)):(Fs-Fs/length(t)), power_spectrum_filtered);
-title('Power Spectrum (Filtered Reconstructed)');
-xlabel('Frequency (Hz)');
-ylabel('Power');
