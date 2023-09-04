@@ -23,8 +23,8 @@ c:::::::cccccc:::::c      t::::::tttt:::::tr:::::r           l::::::l           
 
 // Included libraries
 #include <Wire.h>
-#include "./sbus.h"
-#include "./MPU6050.h"
+#include <sbus.h>
+#include "MPU6050.h"
 
 // Time variables instantiated
 float dt;
