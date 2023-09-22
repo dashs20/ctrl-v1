@@ -133,8 +133,9 @@ void setup()
 void loop() 
 {
   // Keep track of what time it is and how much time has elapsed since the last loop
-  prev_time = current_time;      
-  current_time = micros();      
+  prev_time = current_time;
+  current_time = micros();
+  
   dt = (current_time - prev_time)/1000000.0;
   
   // get RX data from pilot and scale them to max rates
@@ -181,8 +182,15 @@ void loop()
   Serial.println(switch_cmd);
   */
 
+  // Determine headroom
+  int ping = micros();
+  
   // Main loop delay
   loopRate(2000);
+  
+  int pong = micros();
+  float headroom = pong - ping;
+  Serial.println(headroom); // Print headroom (in microseconds) to serial monitor
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
